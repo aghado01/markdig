@@ -212,13 +212,11 @@ public class ParagraphBlockParser : BlockParser
 
                 // Correct the locations of each field
                 linkReferenceDefinition.Line = lines.Lines[0].Line;
-                int startPosition = lines.Lines[0].Slice.Start;
 
-                linkReferenceDefinition.Span        = linkReferenceDefinition.Span      .MoveForward(startPosition);
-                linkReferenceDefinition.LabelSpan   = linkReferenceDefinition.LabelSpan .MoveForward(startPosition);
-                linkReferenceDefinition.UrlSpan     = linkReferenceDefinition.UrlSpan   .MoveForward(startPosition);
-                linkReferenceDefinition.TitleSpan   = linkReferenceDefinition.TitleSpan .MoveForward(startPosition);
-
+                linkReferenceDefinition.Span = lines.ConvertToAbsoluteSpan(linkReferenceDefinition.Span);
+                linkReferenceDefinition.LabelSpan = lines.ConvertToAbsoluteSpan(linkReferenceDefinition.LabelSpan);
+                linkReferenceDefinition.UrlSpan = lines.ConvertToAbsoluteSpan(linkReferenceDefinition.UrlSpan);
+                linkReferenceDefinition.TitleSpan = lines.ConvertToAbsoluteSpan(linkReferenceDefinition.TitleSpan);
                 lines = iterator.Remaining();
             }
             else
@@ -256,24 +254,23 @@ public class ParagraphBlockParser : BlockParser
                 // Correct the locations of each field
                 lrd.Line = lines.Lines[0].Line;
                 var text = lines.Lines[0].Slice.Text;
-                int startPosition = lines.Lines[0].Slice.Start;
 
-                triviaBeforeLabel = triviaBeforeLabel.MoveForward(startPosition);
-                labelWithTrivia = labelWithTrivia.MoveForward(startPosition);
-                triviaBeforeUrl = triviaBeforeUrl.MoveForward(startPosition);
-                unescapedUrl = unescapedUrl.MoveForward(startPosition);
-                triviaBeforeTitle = triviaBeforeTitle.MoveForward(startPosition);
-                unescapedTitle = unescapedTitle.MoveForward(startPosition);
-                triviaAfterTitle = triviaAfterTitle.MoveForward(startPosition);
-                lrd.Span = lrd.Span.MoveForward(startPosition);
+                triviaBeforeLabel = lines.ConvertToAbsoluteSpan(triviaBeforeLabel);
+                labelWithTrivia = lines.ConvertToAbsoluteSpan(labelWithTrivia);
+                triviaBeforeUrl = lines.ConvertToAbsoluteSpan(triviaBeforeUrl);
+                unescapedUrl = lines.ConvertToAbsoluteSpan(unescapedUrl);
+                triviaBeforeTitle = lines.ConvertToAbsoluteSpan(triviaBeforeTitle);
+                unescapedTitle = lines.ConvertToAbsoluteSpan(unescapedTitle);
+                triviaAfterTitle = lines.ConvertToAbsoluteSpan(triviaAfterTitle);
+                lrd.Span = lines.ConvertToAbsoluteSpan(lrd.Span);
                 lrd.TriviaBefore = new StringSlice(text, triviaBeforeLabel.Start, triviaBeforeLabel.End);
-                lrd.LabelSpan = lrd.LabelSpan.MoveForward(startPosition);
+                lrd.LabelSpan = lines.ConvertToAbsoluteSpan(lrd.LabelSpan);
                 lrd.LabelWithTrivia = new StringSlice(text, labelWithTrivia.Start, labelWithTrivia.End);
                 lrd.TriviaBeforeUrl = new StringSlice(text, triviaBeforeUrl.Start, triviaBeforeUrl.End);
-                lrd.UrlSpan = lrd.UrlSpan.MoveForward(startPosition);
+                lrd.UrlSpan = lines.ConvertToAbsoluteSpan(lrd.UrlSpan);
                 lrd.UnescapedUrl = new StringSlice(text, unescapedUrl.Start, unescapedUrl.End);
                 lrd.TriviaBeforeTitle = new StringSlice(text, triviaBeforeTitle.Start, triviaBeforeTitle.End);
-                lrd.TitleSpan = lrd.TitleSpan.MoveForward(startPosition);
+                lrd.TitleSpan = lines.ConvertToAbsoluteSpan(lrd.TitleSpan);
                 lrd.UnescapedTitle = new StringSlice(text, unescapedTitle.Start, unescapedTitle.End);
                 lrd.TriviaAfter = new StringSlice(text, triviaAfterTitle.Start, triviaAfterTitle.End);
                 lrd.LinesBefore = paragraph.LinesBefore;
@@ -292,4 +289,5 @@ public class ParagraphBlockParser : BlockParser
 
         return atLeastOneFound;
     }
+
 }
